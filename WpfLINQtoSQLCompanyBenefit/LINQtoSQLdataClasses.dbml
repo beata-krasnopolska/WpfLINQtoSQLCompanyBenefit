@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="CompanyBenefitDB" Class="LINQtoSQLdataClassesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=LAPTOP-FGIQ9VEA\COMPANYPAYSQL;Initial Catalog=CompanyBenefitDB;Integrated Security=True" SettingsObjectName="WpfLINQtoSQLCompanyBenefit.Properties.Settings" SettingsPropertyName="CompanyBenefitDBConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Post" Member="Posts">
+    <Type Name="Post">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PostName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Post_Person" Member="Persons" ThisKey="Id" OtherKey="PostId" Type="Person" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Person" Member="Persons">
+    <Type Name="Person">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PersonName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Gender" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="PostId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Person_PersonBenefit" Member="PersonBenefits" ThisKey="Id" OtherKey="PersonId" Type="PersonBenefit" />
+      <Association Name="Post_Person" Member="Post" ThisKey="PostId" OtherKey="Id" Type="Post" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.BenefitList" Member="BenefitLists">
+    <Type Name="BenefitList">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="BenefitName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="BenefitList_PersonBenefit" Member="PersonBenefits" ThisKey="Id" OtherKey="BenefitId" Type="PersonBenefit" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PersonBenefit" Member="PersonBenefits">
+    <Type Name="PersonBenefit">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PersonId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BenefitId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="BenefitList_PersonBenefit" Member="BenefitList" ThisKey="BenefitId" OtherKey="Id" Type="BenefitList" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Person_PersonBenefit" Member="Person" ThisKey="PersonId" OtherKey="Id" Type="Person" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+</Database>

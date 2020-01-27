@@ -32,7 +32,7 @@ namespace WpfLINQtoSQLCompanyBenefit
             dataContext = new LINQtoSQLdataClassesDataContext(connectionString);
 
             InsertPost();
-            //InsertPerson();
+            InsertPerson();
             //InsertBenefit();
             //InsertPersonBenefitAssociations();
             //GetPostOfAnna();
@@ -46,34 +46,53 @@ namespace WpfLINQtoSQLCompanyBenefit
 
         public void InsertPost()
         {
-            dataContext.ExecuteCommand("delete from Post");
+            //dataContext.ExecuteCommand("delete from Post");
 
-            Post Manager = new Post();
-            Manager.PostName = "Manager";
-            dataContext.Posts.InsertOnSubmit(Manager);
+            var manager = dataContext.Posts.SingleOrDefault(x => x.PostName == "Manager");
 
-            Post Assistant = new Post();
-            Assistant.PostName = "Assistant";
-            dataContext.Posts.InsertOnSubmit(Assistant);
+            if (manager == null)
+            {
+                Post Manager = new Post();
+                Manager.PostName = "Manager";
+                dataContext.Posts.InsertOnSubmit(Manager);
+            }
+
+            var assistant = dataContext.Posts.SingleOrDefault(x => x.PostName == "Assistant");
+
+            if (assistant == null)
+            {
+                Post Assistant = new Post();
+                Assistant.PostName = "Assistant";
+                dataContext.Posts.InsertOnSubmit(Assistant);
+            }
 
             dataContext.SubmitChanges();
-            MainDataGrid.ItemsSource = dataContext.Posts;
+            MainDataGrid.ItemsSource = dataContext.Posts.Select(x => new Entity.Post
+            {
+                Id = x.Id,
+                PostName = x.PostName
+            }).ToList();
         }
 
         public void InsertPerson()
         {
-            Post Manager = dataContext.Posts.First(p => p.PostName == "Manager");
-            Post Assistant = dataContext.Posts.First(p => p.PostName == "Assistant");
+            var manager = dataContext.Posts.First(p => p.PostName == "Manager");
+            var assistant = dataContext.Posts.First(p => p.PostName == "Assistant");
 
             List<Person> people = new List<Person>();
-            people.Add(new Person { PersonName = "Jan", Gender = "male", Post = Manager });
-            people.Add(new Person { PersonName = "Anna", Gender = "female", Post = Manager });
-            people.Add(new Person { PersonName = "John", Gender = "trans-gender", Post = Assistant });
-            people.Add(new Person { PersonName = "Mon", Gender = "female", Post = Assistant });
+            people.Add(new Person { PersonName = "Jan", Gender = "male", PostId = manager.Id });
+            people.Add(new Person { PersonName = "Anna", Gender = "female", PostId = manager.Id });
+            people.Add(new Person { PersonName = "John", Gender = "trans-gender", PostId = assistant.Id });
+            people.Add(new Person { PersonName = "Mon", Gender = "female", PostId = assistant.Id });
 
             dataContext.Persons.InsertAllOnSubmit(people);
             dataContext.SubmitChanges();
-            MainDataGrid.ItemsSource = dataContext.Persons;
+            MainDataGrid.ItemsSource = dataContext.Persons.Select(x => new Entity.Person {
+                Id = x.Id,
+                Gender = x.Gender,
+                PostId = x.PostId,
+                Name = x.PersonName
+            }).ToList();
         }
 
         public void InsertBenefit()

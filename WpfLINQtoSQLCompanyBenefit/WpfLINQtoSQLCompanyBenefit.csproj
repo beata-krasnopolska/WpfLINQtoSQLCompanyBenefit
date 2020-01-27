@@ -70,6 +70,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CompanyBenefitDBDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Entity\Person.cs" />
+    <Compile Include="Entity\Post.cs" />
     <Compile Include="LINQtoSQLdataClasses.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

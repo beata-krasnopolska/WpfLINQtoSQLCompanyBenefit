@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Configuration;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace WpfLINQtoSQLCompanyBenefit
 {
@@ -26,7 +28,7 @@ namespace WpfLINQtoSQLCompanyBenefit
         public MainWindow()
         {
             InitializeComponent();
-            
+
             string connectionString = ConfigurationManager.ConnectionStrings["WpfLINQtoSQLCompanyBenefit.Properties.Settings.CompanyBenefitDBConnectionString"].ConnectionString;
 
             dataContext = new LINQtoSQLdataClassesDataContext(connectionString);
@@ -46,8 +48,6 @@ namespace WpfLINQtoSQLCompanyBenefit
 
         public void InsertPost()
         {
-            //dataContext.ExecuteCommand("delete from Post");
-
             var manager = dataContext.Posts.SingleOrDefault(x => x.PostName == "Manager");
 
             if (manager == null)
@@ -87,7 +87,8 @@ namespace WpfLINQtoSQLCompanyBenefit
 
             dataContext.Persons.InsertAllOnSubmit(people);
             dataContext.SubmitChanges();
-            MainDataGrid.ItemsSource = dataContext.Persons.Select(x => new Entity.Person {
+            MainDataGrid.ItemsSource = dataContext.Persons.Select(x => new Entity.Person
+            {
                 Id = x.Id,
                 Gender = x.Gender,
                 PostId = x.PostId,
@@ -173,27 +174,76 @@ namespace WpfLINQtoSQLCompanyBenefit
 
             MainDataGrid.ItemsSource = assistantsBenefits;
         }
-
-        public void UpdateMon()
+        
+        //---------------------------------------------------------------------------------------
+        private void BtnAddPerson_Click(object sender, RoutedEventArgs e)
         {
-            Person Mon = dataContext.Persons.FirstOrDefault(p => p.PersonName == "Mon");
+            var addPersonDialog = new AddPersonDialog();
+            addPersonDialog.ShowDialog();
+            //if (addPersonDialog.ShowDialog() == true)
+            //{
+                Person addedPerson;
+                dataContext.Persons.InsertOnSubmit(addedPerson = new Person()
+                {
+                    PersonName = TxtName.Text,
+                    Gender = TxtGender.Text,
+                    //PostId = int.Parse(TxtPost.Text)
+                });
 
-            Mon.PersonName = "Monica";
+                dataContext.SubmitChanges();
+                MainDataGrid.ItemsSource = dataContext.Persons;
+            //}
+        }
+
+        private void ListPersons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var person = MainDataGrid.SelectedItem as Person;
+            if (person != null)
+            {
+                TxtName.Text = person.PersonName;
+                TxtGender.Text = person.Gender;
+                TxtPost.Text = person.Post.PostName;
+            }
+        }
+
+        private void BtnUpdatePerson_Click(object sender, RoutedEventArgs e)
+        {
+            //MessageBox.Show("Update button clicked!");
+            var person = MainDataGrid.SelectedItem as Person;
+            if (person != null)
+            {
+                person.PersonName = TxtName.Text;
+                person.Gender = TxtGender.Text;
+                var personFromList = dataContext.Persons.FirstOrDefault(p => p.PersonName.Equals(TxtName.Text));
+                if (personFromList != null)
+                {
+                    personFromList.PersonName = person.PersonName;
+                    personFromList.Gender = person.Gender;
+                    personFromList.Post = person.Post;
+                }
+            }
             dataContext.SubmitChanges();
             MainDataGrid.ItemsSource = dataContext.Persons;
         }
 
-        public void DeleteJohn()
+        private void BtnDeletePerson_Click(object sender, RoutedEventArgs e)
         {
-            Person John = dataContext.Persons.FirstOrDefault(p => p.PersonName == "John");
-            dataContext.Persons.DeleteOnSubmit(John);
+            //MessageBox.Show("Delete button clicked!");
+            var person = MainDataGrid.SelectedItem as Person;
+            if (person == null)
+            {
+                throw new Exception("Person cannot be null");
+            }
 
-            dataContext.SubmitChanges();
-
-            string connectionString = ConfigurationManager.ConnectionStrings["WpfLINQtoSQLCompanyBenefit.Properties.Settings.CompanyBenefitDBConnectionString"].ConnectionString;
-            dataContext = new LINQtoSQLdataClassesDataContext(connectionString);
-
-            MainDataGrid.ItemsSource = dataContext.Persons;
+            if (person != null)
+            {
+                dataContext.Persons.DeleteOnSubmit(person);
+                dataContext.SubmitChanges();
+                MainDataGrid.ItemsSource = dataContext.Persons;
+                person.PersonName = "";
+                person.Gender = "";
+                person.PostId = 0;
+            }
         }
     }
 }

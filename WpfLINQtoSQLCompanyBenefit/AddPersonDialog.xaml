@@ -1,0 +1,21 @@
+﻿<Window x:Class="WpfLINQtoSQLCompanyBenefit.AddPersonDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfLINQtoSQLCompanyBenefit"
+        mc:Ignorable="d"
+        Title="AddPersonDialog" Height="268" Width="384">
+    <Grid>
+        <StackPanel Grid.Column="0">
+            <Label Content="Name"></Label>
+            <TextBox x:Name ="TxtName" Margin="20,0"></TextBox>
+            <Label Content="Gender"></Label>
+            <TextBox x:Name ="TxtGender" Margin="20,0"></TextBox>
+            <Label Content="Post"></Label>
+            <TextBox x:Name ="TxtPost" Margin="20,0"></TextBox>
+        </StackPanel>
+        <Button x:Name="AddButton" Content="Add" IsDefault="True" HorizontalAlignment="Left" Margin="281,206,0,0" VerticalAlignment="Top" Width="76" Click="AddPersonButton"/>
+        <Button x:Name="CancelButton" Content="Cancel" IsCancel="True" HorizontalAlignment="Left" Margin="188,206,0,0" VerticalAlignment="Top" Width="74"/>
+    </Grid>
+</Window>

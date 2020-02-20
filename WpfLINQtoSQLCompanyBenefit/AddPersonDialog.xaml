@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfLINQtoSQLCompanyBenefit"
         mc:Ignorable="d"
-        Title="AddPersonDialog" Height="268" Width="384">
+        Title="AddPersonDialog" Height="268" Width="384"
+        Loaded="Window_Loaded">
     <Grid>
         <StackPanel Grid.Column="0">
             <Label Content="Name"></Label>
@@ -13,7 +14,7 @@
             <Label Content="Gender"></Label>
             <TextBox x:Name ="TxtGender" Margin="20,0"></TextBox>
             <Label Content="Post"></Label>
-            <TextBox x:Name ="TxtPost" Margin="20,0"></TextBox>
+            <ComboBox x:Name="myCombo" Text="Is not open" Height="26" Margin="20,0,96,0" RenderTransformOrigin="0.595,0.375"/>
         </StackPanel>
         <Button x:Name="AddButton" Content="Add" IsDefault="True" HorizontalAlignment="Left" Margin="281,206,0,0" VerticalAlignment="Top" Width="76" Click="AddPersonButton"/>
         <Button x:Name="CancelButton" Content="Cancel" IsCancel="True" HorizontalAlignment="Left" Margin="188,206,0,0" VerticalAlignment="Top" Width="74"/>

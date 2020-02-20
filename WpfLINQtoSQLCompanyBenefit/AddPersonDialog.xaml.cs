@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +20,15 @@ namespace WpfLINQtoSQLCompanyBenefit
     /// </summary>
     public partial class AddPersonDialog : Window
     {
+        LINQtoSQLdataClassesDataContext dataContext;
+
         public AddPersonDialog()
         {
             InitializeComponent();
+
+            string connectionString = ConfigurationManager.ConnectionStrings["WpfLINQtoSQLCompanyBenefit.Properties.Settings.CompanyBenefitDBConnectionString"].ConnectionString;
+
+            dataContext = new LINQtoSQLdataClassesDataContext(connectionString);
         }
 
         public Person Person { get; set; }
@@ -33,9 +40,22 @@ namespace WpfLINQtoSQLCompanyBenefit
             {
                 PersonName = TxtName.Text,
                 Gender = TxtGender.Text,
-                //PostId = int.Parse(TxtPost.Text)
+                PostId = int.Parse(myCombo.Text)
             };
+
+            dataContext.Persons.InsertOnSubmit(Person);
+            dataContext.SubmitChanges();
             DialogResult = true;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            var postIds = dataContext.Posts.Select(x => x.Id);
+
+            foreach(var postId in postIds)
+            {
+                myCombo.Items.Add(postId);
+            }
         }
     }
 }

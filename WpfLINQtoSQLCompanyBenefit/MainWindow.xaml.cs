@@ -33,8 +33,8 @@ namespace WpfLINQtoSQLCompanyBenefit
 
             dataContext = new LINQtoSQLdataClassesDataContext(connectionString);
 
-            InsertPost();
-            InsertPerson();
+            //InsertPost();
+            //InsertPerson();
             //InsertBenefit();
             //InsertPersonBenefitAssociations();
             //GetPostOfAnna();
@@ -182,22 +182,28 @@ namespace WpfLINQtoSQLCompanyBenefit
             addPersonDialog.ShowDialog();
             //if (addPersonDialog.ShowDialog() == true)
             //{
-                Person addedPerson;
-                dataContext.Persons.InsertOnSubmit(addedPerson = new Person()
-                {
-                    PersonName = TxtName.Text,
-                    Gender = TxtGender.Text,
-                    //PostId = int.Parse(TxtPost.Text)
-                });
+                //Person addedPerson;
+                //dataContext.Persons.InsertOnSubmit(addedPerson = new Person()
+                //{
+                //    PersonName = TxtName.Text,
+                //    Gender = TxtGender.Text,
+                //    PostId = int.Parse(TxtPost.Text)
+                //});
 
-                dataContext.SubmitChanges();
-                MainDataGrid.ItemsSource = dataContext.Persons;
+                //dataContext.SubmitChanges();
+                //MainDataGrid.ItemsSource = dataContext.Persons;
             //}
         }
 
         private void ListPersons_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var person = MainDataGrid.SelectedItem as Person;
+
+            if (person == null)
+            {
+                return;
+            }
+
             if (person != null)
             {
                 TxtName.Text = person.PersonName;
@@ -210,40 +216,58 @@ namespace WpfLINQtoSQLCompanyBenefit
         {
             //MessageBox.Show("Update button clicked!");
             var person = MainDataGrid.SelectedItem as Person;
+
+            if (person == null)
+            {
+                MessageBox.Show("Person must be selected before update!");
+                return;
+            }
+
             if (person != null)
             {
                 person.PersonName = TxtName.Text;
                 person.Gender = TxtGender.Text;
-                var personFromList = dataContext.Persons.FirstOrDefault(p => p.PersonName.Equals(TxtName.Text));
-                if (personFromList != null)
-                {
-                    personFromList.PersonName = person.PersonName;
-                    personFromList.Gender = person.Gender;
-                    personFromList.Post = person.Post;
-                }
+
+                var post = dataContext.Posts.FirstOrDefault();
+
+                person.Post = post;
+
+                dataContext.SubmitChanges();
             }
-            dataContext.SubmitChanges();
-            MainDataGrid.ItemsSource = dataContext.Persons;
+
+            MainDataGrid.ItemsSource = null;
+            MainDataGrid.ItemsSource = dataContext.Persons.ToList();
+            MainDataGrid.SelectedItem = person;
         }
 
         private void BtnDeletePerson_Click(object sender, RoutedEventArgs e)
         {
             //MessageBox.Show("Delete button clicked!");
             var person = MainDataGrid.SelectedItem as Person;
+
             if (person == null)
             {
-                throw new Exception("Person cannot be null");
+                MessageBox.Show("Person must be selected before delete!");
+                return;
             }
 
             if (person != null)
             {
                 dataContext.Persons.DeleteOnSubmit(person);
                 dataContext.SubmitChanges();
-                MainDataGrid.ItemsSource = dataContext.Persons;
-                person.PersonName = "";
-                person.Gender = "";
-                person.PostId = 0;
+                MainDataGrid.ItemsSource = null;
+                MainDataGrid.ItemsSource = dataContext.Persons.ToList();
+                //MainDataGrid.Items.Refresh();
+
+                TxtName.Text = string.Empty;
+                TxtGender.Text = string.Empty;
+                TxtPost.Text = string.Empty;
             }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainDataGrid.ItemsSource = dataContext.Persons;
         }
     }
 }

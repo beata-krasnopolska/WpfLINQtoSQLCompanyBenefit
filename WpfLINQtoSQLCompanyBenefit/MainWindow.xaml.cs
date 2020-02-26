@@ -32,18 +32,6 @@ namespace WpfLINQtoSQLCompanyBenefit
             string connectionString = ConfigurationManager.ConnectionStrings["WpfLINQtoSQLCompanyBenefit.Properties.Settings.CompanyBenefitDBConnectionString"].ConnectionString;
 
             dataContext = new LINQtoSQLdataClassesDataContext(connectionString);
-
-            //InsertPost();
-            //InsertPerson();
-            //InsertBenefit();
-            //InsertPersonBenefitAssociations();
-            //GetPostOfAnna();
-            //GetAnnaBenefit();
-            //GetAllManagers();
-            //GetAllPostsWithTransgenders();
-            //GetAssistantsBenefits();
-            //UpdateMon();
-            //DeleteJohn();
         }
 
         public void InsertPost()
@@ -124,75 +112,11 @@ namespace WpfLINQtoSQLCompanyBenefit
             dataContext.SubmitChanges();
             MainDataGrid.ItemsSource = dataContext.PersonBenefits;
         }
-
-        public void GetPostOfAnna()
-        {
-            Person Anna = dataContext.Persons.First(p => p.PersonName == "Anna");
-
-            Post post = Anna.Post;
-            List<Post> annaPost = new List<Post>();
-            annaPost.Add(post);
-            MainDataGrid.ItemsSource = annaPost;
-        }
-
-        public void GetAnnaBenefit()
-        {
-            var annasBenefit = from pb in dataContext.PersonBenefits
-                               where pb.Person.PersonName == "Anna"
-                               select pb.BenefitList;
-
-            MainDataGrid.ItemsSource = annasBenefit;
-        }
-
-        public void GetAllManagers()
-        {
-            var managerPeople = from person in dataContext.Persons
-                                where person.Post.PostName == "Manager"
-                                select person;
-
-            MainDataGrid.ItemsSource = managerPeople;
-        }
-
-        public void GetAllPostsWithTransgenders()
-        {
-            var transgenders = from person in dataContext.Persons
-                               join post in dataContext.Posts
-                               on person.Post equals post
-                               where person.Gender == "trans-gender"
-                               select post;
-
-            MainDataGrid.ItemsSource = transgenders;
-        }
-
-        public void GetAssistantsBenefits()
-        {
-            var assistantsBenefits = from personBenefit in dataContext.PersonBenefits
-                                     join person in dataContext.Persons
-                                     on personBenefit.PersonId equals person.Id
-                                     where person.Post.PostName == "Assistant"
-                                     select personBenefit.BenefitList;
-
-            MainDataGrid.ItemsSource = assistantsBenefits;
-        }
-        
-        //---------------------------------------------------------------------------------------
+                
         private void BtnAddPerson_Click(object sender, RoutedEventArgs e)
         {
             var addPersonDialog = new AddPersonDialog();
             addPersonDialog.ShowDialog();
-            //if (addPersonDialog.ShowDialog() == true)
-            //{
-                //Person addedPerson;
-                //dataContext.Persons.InsertOnSubmit(addedPerson = new Person()
-                //{
-                //    PersonName = TxtName.Text,
-                //    Gender = TxtGender.Text,
-                //    PostId = int.Parse(TxtPost.Text)
-                //});
-
-                //dataContext.SubmitChanges();
-                //MainDataGrid.ItemsSource = dataContext.Persons;
-            //}
         }
 
         private void ListPersons_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -214,7 +138,6 @@ namespace WpfLINQtoSQLCompanyBenefit
 
         private void BtnUpdatePerson_Click(object sender, RoutedEventArgs e)
         {
-            //MessageBox.Show("Update button clicked!");
             var person = MainDataGrid.SelectedItem as Person;
 
             if (person == null)
@@ -242,7 +165,6 @@ namespace WpfLINQtoSQLCompanyBenefit
 
         private void BtnDeletePerson_Click(object sender, RoutedEventArgs e)
         {
-            //MessageBox.Show("Delete button clicked!");
             var person = MainDataGrid.SelectedItem as Person;
 
             if (person == null)
@@ -257,7 +179,6 @@ namespace WpfLINQtoSQLCompanyBenefit
                 dataContext.SubmitChanges();
                 MainDataGrid.ItemsSource = null;
                 MainDataGrid.ItemsSource = dataContext.Persons.ToList();
-                //MainDataGrid.Items.Refresh();
 
                 TxtName.Text = string.Empty;
                 TxtGender.Text = string.Empty;

@@ -35,7 +35,6 @@ namespace WpfLINQtoSQLCompanyBenefit
 
         private void AddPersonButton(object sender, RoutedEventArgs e)
         {
-            //MessageBox.Show("Add clicked!!");
             Person = new Person()
             {
                 PersonName = TxtName.Text,
